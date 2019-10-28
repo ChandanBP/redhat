@@ -5,6 +5,9 @@ import com.example.demo.ServerProduct;
 import com.example.demo.repo.ProductRepository;
 import com.example.demo.repo.ServerProductRepository;
 import com.opencsv.CSVReader;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,58 +30,55 @@ public class ProductServiceImpl implements ProductService {
     public void createProducts() {
 
         try {
-            CSVReader csvReader = new CSVReader(new FileReader("/Users/administrator/Downloads/DatafinitiElectronicsProductsPricingData.csv"));
             BufferedReader reader = Files.newBufferedReader(Paths.get("/Users/administrator/Downloads/DatafinitiElectronicsProductsPricingData.csv"));
-            String[] data;
-            boolean first = true;
-            while ((data = csvReader.readNext()) != null) {
-                if (first) {
-                    first = false;
-                    csvReader.readNext();
-                    continue;
-                }
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader("id","prices.amountMax","prices.amountMin","prices.availability","prices.condition",
+                    "prices.currency","prices.dateSeen","prices.isSale","prices.merchant","prices.shipping","prices.sourceURLs","asins","brand","categories","dateAdded","dateUpdated","ean",
+                    "imageURLs","keys","manufacturer","manufacturerNumber","name","primaryCategories","sourceURLs","upc","weight"));
 
-                if (data.length < 26) continue;
-
+            int count = 1;
+            for(CSVRecord csvRecord: csvParser){
                 Product product = new Product();
 
-                if(data[11].length()>0) {
-                    if (data[11].contains(",")) {
-                        product.setId(data[11].split(",")[0]);
-                    } else {
-                        product.setId(data[11]);
-                    }
+                if (count == 982) {
+                    System.out.println(count);
                 }
 
-                if(data[21].length()>0)
-                    product.setTitle(data[21]);
+                // Product id
+                if(csvRecord.get("asins").contains(",")) {
+                    product.setId(csvRecord.get("asins").split(",")[0]);
+                } else {
+                    product.setId(csvRecord.get("asins"));
+                }
 
+                // Product title
+                product.setTitle(csvRecord.get("name"));
+
+                // Product price
                 long l=200L;
                 try {
-                    l = (long) (Float.parseFloat(data[1]) * 70);
+                    l = (long) (Float.parseFloat(csvRecord.get("prices.amountMax")) * 70);
                     product.setSalePrice(l);
                     product.setDiscountPrice(l - 50);
-                }catch (NumberFormatException numberException) {
+                } catch (NumberFormatException exception) {
                     product.setSalePrice(l);
                     product.setDiscountPrice(l-50);
                 }
 
                 product.setStock(true);
+                product.setCategory(csvRecord.get("categories"));
 
-                if(data[13].length()>0)
-                    product.setCategory(data[13]);
-
-                if (data[10].contains("walmart")) {
+                String pURL = csvRecord.get("prices.sourceURLs");
+                if(pURL.contains("walmart")) {
                     product.setSite("WALMART");
-                } else if (data[10].contains("ebay")) {
+                } else if (pURL.contains("ebay")) {
                     product.setSite("EBAY");
-                } else if (data[10].contains("amazon")){
+                } else if (pURL.contains("amazon")) {
                     product.setSite("AMAZON");
-                }else {
+                } else if (pURL.contains("bestbuy")) {
                     product.setSite("BESTBUY");
                 }
-                product.setProductURL(data[10]);
-                product.setProductUrl(data[10]);
+                product.setProductUrl(pURL);
+                product.setProductURL(pURL);
                 productRepository.save(product);
 
                 ServerProduct serverProduct = new ServerProduct();
@@ -95,7 +95,10 @@ public class ProductServiceImpl implements ProductService {
                 serverProduct.setDiscountPrice(product.getDiscountPrice());
                 serverProduct.setSite(product.getSite());
                 serverProductRepository.save(serverProduct);
+
+                ++count;
             }
+
         } catch (IOException ioexception) {
 
         }

@@ -110,7 +110,7 @@ public class FlipkartServiceImpl implements FlipkartService {
 
     @Override
     public Iterable<Product> getAllProducts() {
-        Pageable paging = PageRequest.of(0,100);
+        Pageable paging = PageRequest.of(0,1000);
         return productRepository.findAll(paging);
         //return productRepository.findAll();
     }
