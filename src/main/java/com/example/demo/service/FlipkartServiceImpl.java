@@ -48,6 +48,7 @@ public class FlipkartServiceImpl implements FlipkartService {
                 }
 
                 if (data.length<14) continue;
+                System.out.println("test");
 
                 Product product = new Product();
 
