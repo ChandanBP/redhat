@@ -38,6 +38,8 @@ public class ConsumerServiceImpl implements ConsumerService {
         helper.setText("Price of "+product.getTitle()+" has been dropped to "+product.getDiscountPrice()+" on "+product.getSite());
         helper.setSubject("Price Drop Alert!!!!!");
         sender.send(mimeMessage);
+
+
     }
 
     @Override
@@ -53,6 +55,7 @@ public class ConsumerServiceImpl implements ConsumerService {
         props.put("ssl.keystore.password", "password");
         props.put("ssl.truststore.location", "src/main/resources/keystore.jks");
         props.put("ssl.truststore.password", "password");
+
 
         try (final KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
             consumer.subscribe(Arrays.asList("my-topic"));

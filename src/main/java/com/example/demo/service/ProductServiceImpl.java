@@ -36,6 +36,7 @@ public class ProductServiceImpl implements ProductService {
                     "imageURLs","keys","manufacturer","manufacturerNumber","name","primaryCategories","sourceURLs","upc","weight"));
 
             int count = 1;
+            
             for(CSVRecord csvRecord: csvParser){
                 Product product = new Product();
 
