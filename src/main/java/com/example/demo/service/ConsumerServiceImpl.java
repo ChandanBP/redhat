@@ -38,8 +38,6 @@ public class ConsumerServiceImpl implements ConsumerService {
         helper.setText("Price of "+product.getTitle()+" has been dropped to "+product.getDiscountPrice()+" on "+product.getSite());
         helper.setSubject("Price Drop Alert!!!!!");
         sender.send(mimeMessage);
-        
-        
     }
 
     @Override
