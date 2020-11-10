@@ -65,7 +65,7 @@ public class ProducerServiceImpl implements ProducerService {
         RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost",9200,"http")));
         SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
         String scrollId = searchResponse.getScrollId();
-        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        SearchHit[] searchHits = searchResponse.getHits().getHits(); 
 
         List<String>emails = new LinkedList<>();
         emails.add("cbp698@gmail.com");
