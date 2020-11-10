@@ -59,7 +59,7 @@ public class FlipkartServiceImpl implements FlipkartService {
                 product.setTitle(data[3]);
 
                 if(data[10].length()>0)
-                product.setDescription(data[10]);
+                product.setDescription(data[10]);  
                 try {
                     if (data[6].length() > 0)
                         product.setSalePrice(Long.parseLong(data[6]));
